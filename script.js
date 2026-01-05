@@ -1,26 +1,23 @@
 /* ============================================
-   Mellow Solutions - JavaScript
+   Mellow Solutions - Premium JavaScript v2
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Intersection Observer for fade-in animations
+  // Intersection Observer for fade-in animations with stagger
   const fadeElements = document.querySelectorAll('.fade-in');
-  
+
   const fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        // Staggered animation delay
-        setTimeout(() => {
-          entry.target.classList.add('visible');
-        }, index * 100);
+        entry.target.classList.add('visible');
         fadeObserver.unobserve(entry.target);
       }
     });
   }, {
     threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    rootMargin: '0px 0px -80px 0px'
   });
-  
+
   fadeElements.forEach(el => fadeObserver.observe(el));
 
   // Smooth scroll for anchor links
@@ -29,12 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const target = document.querySelector(anchor.getAttribute('href'));
       if (target) {
-        const offset = 80; // Account for fixed nav
+        const offset = 80;
         const topPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
         window.scrollTo({
           top: topPosition,
           behavior: 'smooth'
         });
+
+        // Close mobile nav if open
+        navLinks.classList.remove('active');
       }
     });
   });
@@ -42,45 +42,93 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile navigation toggle
   const mobileBtn = document.querySelector('.nav-mobile-btn');
   const navLinks = document.querySelector('.nav-links');
-  
+
   if (mobileBtn && navLinks) {
     mobileBtn.addEventListener('click', () => {
-      navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-      navLinks.style.position = 'absolute';
-      navLinks.style.top = '100%';
-      navLinks.style.left = '0';
-      navLinks.style.right = '0';
-      navLinks.style.flexDirection = 'column';
-      navLinks.style.padding = '1rem';
-      navLinks.style.background = 'rgba(26, 47, 56, 0.98)';
-      navLinks.style.borderTop = '1px solid rgba(255, 255, 255, 0.05)';
+      navLinks.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!mobileBtn.contains(e.target) && !navLinks.contains(e.target)) {
+        navLinks.classList.remove('active');
+      }
     });
   }
 
-  // Navbar scroll effect
+  // Navbar scroll effect with class toggle
   const nav = document.querySelector('.nav');
-  let lastScroll = 0;
-  
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-      nav.style.background = 'rgba(26, 47, 56, 0.95)';
-      nav.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.2)';
+  let ticking = false;
+
+  function updateNav() {
+    const scrollY = window.pageYOffset;
+
+    if (scrollY > 50) {
+      nav.classList.add('scrolled');
     } else {
-      nav.style.background = 'rgba(26, 47, 56, 0.85)';
-      nav.style.boxShadow = 'none';
+      nav.classList.remove('scrolled');
     }
-    
-    lastScroll = currentScroll;
+
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(updateNav);
+      ticking = true;
+    }
   });
 
-  // Donation option click handler
+  // Donation option click handler with ripple effect
   document.querySelectorAll('.donation-option').forEach(option => {
-    option.addEventListener('click', () => {
-      const amount = option.querySelector('.donation-amount').textContent;
-      // Open Buy Me a Coffee with pre-selected amount (customize URL as needed)
-      window.open(`https://buymeacoffee.com/mellowsolutions`, '_blank');
+    option.addEventListener('click', (e) => {
+      // Create ripple
+      const ripple = document.createElement('span');
+      ripple.style.cssText = `
+        position: absolute;
+        background: rgba(212, 160, 120, 0.3);
+        border-radius: 50%;
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+      `;
+
+      const rect = option.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+
+      option.style.position = 'relative';
+      option.style.overflow = 'hidden';
+      option.appendChild(ripple);
+
+      setTimeout(() => ripple.remove(), 600);
+
+      // Open Buy Me a Coffee
+      window.open('https://buymeacoffee.com/mellowsolutions', '_blank');
     });
   });
+
+  // Add ripple animation keyframes
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes ripple {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Parallax effect for hero glow (subtle)
+  const heroGlow = document.querySelector('.hero-logo-glow');
+  if (heroGlow) {
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      heroGlow.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    });
+  }
 });
