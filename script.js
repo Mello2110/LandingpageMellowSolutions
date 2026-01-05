@@ -30,13 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target) {
         let topPosition;
 
-        // For support section, center it in viewport
-        if (targetId === '#support') {
+        // Sections to center vertically when scrolling
+        const centeredSections = ['#support'];
+
+        // For centered sections, center them in viewport
+        if (centeredSections.includes(targetId)) {
           const targetHeight = target.offsetHeight;
           const windowHeight = window.innerHeight;
           const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
           // Center the section vertically
           topPosition = targetTop - (windowHeight - targetHeight) / 2;
+        } else if (targetId === '#projects') {
+          // For projects, align top border line with viewport top (below navbar)
+          const navOffset = 60;
+          topPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
         } else {
           // For other sections, use standard offset
           const offset = 80;

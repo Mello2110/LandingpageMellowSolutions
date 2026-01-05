@@ -452,6 +452,23 @@ img {
   margin-bottom: calc(var(--gutter) * 1.5);
 }
 
+.section-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto calc(var(--gutter) * 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-copper);
+  padding: 8px;
+}
+
+.section-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: var(--accent-copper);
+}
+
 .section-header h2 {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 300;
