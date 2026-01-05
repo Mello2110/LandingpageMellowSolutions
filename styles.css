@@ -322,15 +322,46 @@ img {
   }
 }
 
+.hero-headline {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm, 1rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
 .hero-subtitle {
   font-size: clamp(1.1rem, 2.5vw, 1.4rem);
   font-weight: 300;
   color: var(--text-secondary);
-  margin-bottom: var(--gutter);
+  margin-bottom: calc(var(--gutter) * 0.6);
   max-width: 550px;
   margin-left: auto;
   margin-right: auto;
   line-height: 1.5;
+}
+
+.hero-quote {
+  max-width: 500px;
+  margin: 0 auto var(--gutter);
+  text-align: center;
+}
+
+.hero-quote p {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.85;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.hero-quote cite {
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  font-style: italic;
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 .hero-cta {
