@@ -30,18 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target) {
         let topPosition;
 
-        // Sections to center vertically when scrolling
-        const centeredSections = ['#support'];
+        // Sections that align with dividing line (fixed offset below navbar)
+        const lineAlignedSections = ['#support', '#projects'];
 
-        // For centered sections, center them in viewport
-        if (centeredSections.includes(targetId)) {
-          const targetHeight = target.offsetHeight;
-          const windowHeight = window.innerHeight;
-          const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
-          // Center the section vertically
-          topPosition = targetTop - (windowHeight - targetHeight) / 2;
-        } else if (targetId === '#projects') {
-          // For projects, align top border line with viewport top (below navbar)
+        // For line-aligned sections, use fixed offset to show dividing line
+        if (lineAlignedSections.includes(targetId)) {
           const navOffset = 60;
           topPosition = target.getBoundingClientRect().top + window.pageYOffset - navOffset;
         } else {
