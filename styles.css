@@ -797,7 +797,7 @@ img {
   display: flex;
   justify-content: center;
   gap: var(--gutter);
-  margin-top: calc(var(--gutter) * 0.75);
+  margin-top: 0;
   flex-wrap: wrap;
 }
 
