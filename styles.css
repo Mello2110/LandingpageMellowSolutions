@@ -562,6 +562,10 @@ img {
    ============================================ */
 
 .support {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 6rem var(--padding-section);
   background: var(--bg-deep);
   text-align: center;
