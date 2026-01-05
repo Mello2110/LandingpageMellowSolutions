@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const firebaseConfig = {
     apiKey: "AIzaSyB9cLe56D1sZ3fyW0PGGjMXHUQJZZjW9qY",
     authDomain: "mellowsolutionslandingpage.firebaseapp.com",
-    databaseURL: "https://mellowsolutionslandingpage-default-rtdb.firebaseio.com",
+    databaseURL: "https://mellowsolutionslandingpage-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "mellowsolutionslandingpage",
     storageBucket: "mellowsolutionslandingpage.firebasestorage.app",
     messagingSenderId: "238389947436",
