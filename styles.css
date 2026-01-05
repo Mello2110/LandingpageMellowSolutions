@@ -648,8 +648,8 @@ img {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  padding: calc(var(--gutter) * 1.5);
-  padding-bottom: calc(var(--gutter) * 0.75);
+  padding: calc(var(--gutter) * 1);
+  padding-bottom: calc(var(--gutter) * 0.5);
   box-shadow: var(--shadow-card);
   transition: all var(--transition);
 }
@@ -660,21 +660,22 @@ img {
 
 .support-card p {
   color: var(--text-secondary);
-  margin-bottom: var(--gutter);
+  margin-bottom: calc(var(--gutter) * 0.5);
+  font-size: 0.9rem;
 }
 
 .coffee-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   background: linear-gradient(135deg, var(--accent-copper) 0%, var(--accent-copper-light) 100%);
   color: var(--bg-deep);
   border-radius: var(--radius-full);
   transition: all var(--transition);
   box-shadow: 0 4px 30px rgba(201, 150, 122, 0.3);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 .coffee-btn:hover {
@@ -683,15 +684,15 @@ img {
 }
 
 .coffee-btn svg {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
 }
 
 .donation-options {
   display: flex;
   justify-content: center;
-  gap: var(--gutter);
-  margin-top: var(--gutter);
+  gap: calc(var(--gutter) * 0.6);
+  margin-top: calc(var(--gutter) * 0.5);
   flex-wrap: wrap;
 }
 
@@ -699,12 +700,12 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.25rem;
-  padding: calc(var(--gutter) * 0.6) calc(var(--gutter) * 0.8);
+  gap: 0.15rem;
+  padding: calc(var(--gutter) * 0.4) calc(var(--gutter) * 0.6);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-md);
-  min-width: 100px;
+  min-width: 80px;
   cursor: pointer;
   transition: all var(--transition);
   box-shadow: var(--shadow-card);
@@ -718,7 +719,7 @@ img {
 }
 
 .donation-amount {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--accent-copper-light);
 }
@@ -730,11 +731,11 @@ img {
 
 .donation-label-header {
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
 }
 
 /* ============================================
@@ -744,8 +745,8 @@ img {
 .emotion-zone {
   position: relative;
   width: 100%;
-  height: 80px;
-  margin-top: calc(var(--gutter) * 0.5);
+  height: 60px;
+  margin-top: calc(var(--gutter) * 0.25);
   margin-bottom: calc(var(--gutter) * -0.25);
   overflow: hidden;
 }
@@ -804,8 +805,8 @@ img {
 .counter-card {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
