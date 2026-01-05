@@ -148,83 +148,135 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ============================================
-  // Interactive Emotion Zone
+  // Interactive Emotion Zone (Global Counters)
   // ============================================
   const emotionZone = document.getElementById('emotionZone');
   const heartCountEl = document.getElementById('heartCount');
   const thumbCountEl = document.getElementById('thumbCount');
 
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9cLe56D1sZ3fyW0PGGjMXHUQJZZjW9qY",
+    authDomain: "mellowsolutionslandingpage.firebaseapp.com",
+    databaseURL: "https://mellowsolutionslandingpage-default-rtdb.firebaseio.com",
+    projectId: "mellowsolutionslandingpage",
+    storageBucket: "mellowsolutionslandingpage.firebasestorage.app",
+    messagingSenderId: "238389947436",
+    appId: "1:238389947436:web:c47e5d3f6eae847c83f589"
+  };
+
+  let db;
+  let useFirebase = false;
+
+  // Initialize Firebase if config is present
+  if (window.firebase && Object.keys(firebaseConfig).length > 0) {
+    try {
+      const app = window.firebase.initializeApp(firebaseConfig);
+      db = window.firebase.getDatabase(app);
+      useFirebase = true;
+    } catch (e) {
+      console.warn("Firebase initialization failed:", e);
+    }
+  }
+
   if (emotionZone && heartCountEl && thumbCountEl) {
-    // Load counts from localStorage
-    let heartCount = parseInt(localStorage.getItem('mellowHearts') || '127');
-    let thumbCount = parseInt(localStorage.getItem('mellowThumbs') || '89');
-    heartCountEl.textContent = heartCount;
-    thumbCountEl.textContent = thumbCount;
+    // Local state as fallback
+    let localCounts = {
+      hearts: parseInt(localStorage.getItem('mellowHearts') || '0'),
+      thumbs: parseInt(localStorage.getItem('mellowThumbs') || '0')
+    };
 
-    const maxEmojis = 7;
-    let activeHearts = 0;
-    let activeThumbs = 0;
+    // Update UI helper
+    const updateUI = (type, count) => {
+      const el = type === 'hearts' ? heartCountEl : thumbCountEl;
+      el.textContent = count;
+      // Animate counter card
+      const card = el.closest('.counter-card');
+      if (card) {
+        card.style.transform = 'scale(1.05)';
+        setTimeout(() => card.style.transform = '', 150);
+      }
+    };
 
-    function spawnEmoji() {
-      const isHeart = Math.random() > 0.5;
+    // Initial load
+    updateUI('hearts', localCounts.hearts);
+    updateUI('thumbs', localCounts.thumbs);
 
-      if (isHeart && activeHearts >= maxEmojis) return;
-      if (!isHeart && activeThumbs >= maxEmojis) return;
+    // Sync with Firebase if available
+    if (useFirebase) {
+      const countersRef = window.firebase.ref(db, 'counters');
+      window.firebase.onValue(countersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          if (data.hearts) updateUI('hearts', data.hearts);
+          if (data.thumbs) updateUI('thumbs', data.thumbs);
+        }
+      });
+    }
 
+    // Handle Interaction (Click on card or emoji)
+    const handleInteraction = (type) => {
+      // Spawn emoji visual
+      spawnEmojiVisual(type);
+
+      if (useFirebase) {
+        // Firebase Transaction
+        const counterRef = window.firebase.ref(db, `counters/${type}`);
+        window.firebase.runTransaction(counterRef, (currentValue) => {
+          return (currentValue || 0) + 1;
+        });
+      } else {
+        // Local Fallback
+        localCounts[type]++;
+        updateUI(type, localCounts[type]);
+        localStorage.setItem(type === 'hearts' ? 'mellowHearts' : 'mellowThumbs', localCounts[type]);
+      }
+    };
+
+    // Card Click Listeners
+    document.querySelector('.counter-hearts').addEventListener('click', () => handleInteraction('hearts'));
+    document.querySelector('.counter-thumbs').addEventListener('click', () => handleInteraction('thumbs'));
+
+    // Visual Spawn Logic
+    function spawnEmojiVisual(type) {
       const emoji = document.createElement('span');
-      emoji.className = `emotion-emoji ${isHeart ? 'heart' : 'thumb'}`;
-      emoji.textContent = isHeart ? '💖' : '👍';
+      emoji.className = `emotion-emoji ${type === 'hearts' ? 'heart' : 'thumb'}`;
+      emoji.textContent = type === 'hearts' ? '💖' : '👍';
 
       // Random position
-      const x = Math.random() * (emotionZone.offsetWidth - 40);
-      const y = Math.random() * (emotionZone.offsetHeight - 40);
+      const x = Math.random() * (emotionZone.offsetWidth - 30);
+      const y = Math.random() * (emotionZone.offsetHeight - 30);
       emoji.style.left = x + 'px';
       emoji.style.top = y + 'px';
 
-      if (isHeart) activeHearts++;
-      else activeThumbs++;
-
-      // Click to despawn and increment counter
-      emoji.addEventListener('click', () => {
+      // Click on flying emoji also triggers interaction
+      emoji.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent double counting if clicking emoji over card
         emoji.remove();
-        if (isHeart) {
-          activeHearts--;
-          heartCount++;
-          heartCountEl.textContent = heartCount;
-          localStorage.setItem('mellowHearts', heartCount);
-        } else {
-          activeThumbs--;
-          thumbCount++;
-          thumbCountEl.textContent = thumbCount;
-          localStorage.setItem('mellowThumbs', thumbCount);
-        }
+        handleInteraction(type);
       });
 
       emotionZone.appendChild(emoji);
 
-      // Auto-remove after animation
+      // Auto-remove
       setTimeout(() => {
-        if (emoji.parentNode) {
-          emoji.remove();
-          if (isHeart) activeHearts--;
-          else activeThumbs--;
-        }
+        if (emoji.parentNode) emoji.remove();
       }, 2500);
     }
 
-    // Spawn emojis at random intervals
-    function scheduleSpawn() {
-      const delay = 1500 + Math.random() * 1500; // 1.5-3s
+    // Ambient Spawning (Visual only, no count increment)
+    function scheduleAmbientSpawn() {
+      const delay = 2000 + Math.random() * 3000;
       setTimeout(() => {
-        spawnEmoji();
-        scheduleSpawn();
+        if (document.hidden) return; // Don't spawn if tab hidden
+        const type = Math.random() > 0.5 ? 'hearts' : 'thumbs';
+        spawnEmojiVisual(type);
+        scheduleAmbientSpawn();
       }, delay);
     }
 
-    // Start spawning
-    scheduleSpawn();
-    // Initial spawn burst
-    setTimeout(() => spawnEmoji(), 500);
-    setTimeout(() => spawnEmoji(), 1000);
+    scheduleAmbientSpawn();
+    setTimeout(() => spawnEmojiVisual('hearts'), 500);
   }
 });
+
