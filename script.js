@@ -20,21 +20,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fadeElements.forEach(el => fadeObserver.observe(el));
 
-  // Smooth scroll for anchor links
+  // Smooth scroll for anchor links - centers sections in viewport
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
       e.preventDefault();
-      const target = document.querySelector(anchor.getAttribute('href'));
+      const targetId = anchor.getAttribute('href');
+      const target = document.querySelector(targetId);
+
       if (target) {
-        const offset = 80;
-        const topPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        let topPosition;
+
+        // For support section, center it in viewport
+        if (targetId === '#support') {
+          const targetHeight = target.offsetHeight;
+          const windowHeight = window.innerHeight;
+          const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
+          // Center the section vertically
+          topPosition = targetTop - (windowHeight - targetHeight) / 2;
+        } else {
+          // For other sections, use standard offset
+          const offset = 80;
+          topPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        }
+
         window.scrollTo({
-          top: topPosition,
+          top: Math.max(0, topPosition),
           behavior: 'smooth'
         });
 
         // Close mobile nav if open
-        navLinks.classList.remove('active');
+        if (navLinks) navLinks.classList.remove('active');
       }
     });
   });
