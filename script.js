@@ -153,4 +153,85 @@ document.addEventListener('DOMContentLoaded', () => {
       heroGlow.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
     });
   }
+
+  // ============================================
+  // Interactive Emotion Zone
+  // ============================================
+  const emotionZone = document.getElementById('emotionZone');
+  const heartCountEl = document.getElementById('heartCount');
+  const thumbCountEl = document.getElementById('thumbCount');
+
+  if (emotionZone && heartCountEl && thumbCountEl) {
+    // Load counts from localStorage
+    let heartCount = parseInt(localStorage.getItem('mellowHearts') || '127');
+    let thumbCount = parseInt(localStorage.getItem('mellowThumbs') || '89');
+    heartCountEl.textContent = heartCount;
+    thumbCountEl.textContent = thumbCount;
+
+    const maxEmojis = 7;
+    let activeHearts = 0;
+    let activeThumbs = 0;
+
+    function spawnEmoji() {
+      const isHeart = Math.random() > 0.5;
+
+      if (isHeart && activeHearts >= maxEmojis) return;
+      if (!isHeart && activeThumbs >= maxEmojis) return;
+
+      const emoji = document.createElement('span');
+      emoji.className = `emotion-emoji ${isHeart ? 'heart' : 'thumb'}`;
+      emoji.textContent = isHeart ? '💖' : '👍';
+
+      // Random position
+      const x = Math.random() * (emotionZone.offsetWidth - 40);
+      const y = Math.random() * (emotionZone.offsetHeight - 40);
+      emoji.style.left = x + 'px';
+      emoji.style.top = y + 'px';
+
+      if (isHeart) activeHearts++;
+      else activeThumbs++;
+
+      // Click to despawn and increment counter
+      emoji.addEventListener('click', () => {
+        emoji.remove();
+        if (isHeart) {
+          activeHearts--;
+          heartCount++;
+          heartCountEl.textContent = heartCount;
+          localStorage.setItem('mellowHearts', heartCount);
+        } else {
+          activeThumbs--;
+          thumbCount++;
+          thumbCountEl.textContent = thumbCount;
+          localStorage.setItem('mellowThumbs', thumbCount);
+        }
+      });
+
+      emotionZone.appendChild(emoji);
+
+      // Auto-remove after animation
+      setTimeout(() => {
+        if (emoji.parentNode) {
+          emoji.remove();
+          if (isHeart) activeHearts--;
+          else activeThumbs--;
+        }
+      }, 2500);
+    }
+
+    // Spawn emojis at random intervals
+    function scheduleSpawn() {
+      const delay = 1500 + Math.random() * 1500; // 1.5-3s
+      setTimeout(() => {
+        spawnEmoji();
+        scheduleSpawn();
+      }, delay);
+    }
+
+    // Start spawning
+    scheduleSpawn();
+    // Initial spawn burst
+    setTimeout(() => spawnEmoji(), 500);
+    setTimeout(() => spawnEmoji(), 1000);
+  }
 });
