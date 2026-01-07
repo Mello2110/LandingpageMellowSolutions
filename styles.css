@@ -534,9 +534,16 @@ img {
   color: var(--accent-copper);
 }
 
+.project-icon svg,
+.project-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
 .project-icon svg {
-  width: 28px;
-  height: 28px;
+  padding: 12px;
   stroke: var(--accent-copper);
 }
 
